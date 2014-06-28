@@ -1,0 +1,110 @@
+﻿<Window x:Class="ProjectDownloader.ProjectDownloaderWnd"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ProjectDownloader"
+        Title="Project Downloader" Width="800" Height="500"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ToolBarPanel Orientation="Horizontal" Margin="0,0,20,0">
+                <Button Name="btnSettings" Style="{StaticResource DefaultButtonStyle}">
+                    Settings</Button>
+                <Button Name="btnStart" Style="{StaticResource DefaultButtonStyle}" 
+                    Click="btnStart_Click">Start</Button>
+                <Button Name="btnCancel" Style="{StaticResource DefaultButtonStyle}"
+                        Click="btnCancel_Click">Cancel</Button>
+                <Button Name="btnPauseResume" Style="{StaticResource DefaultButtonStyle}"
+                        Click="btnPauseResume_Click">Pause/Resume</Button>
+                <Button Name="btnRemove" Style="{StaticResource DefaultButtonStyle}"
+                        Click="btnRemove_Click">Remove</Button>
+                <Button Name="btnClear" Style="{StaticResource DefaultButtonStyle}"
+                        Click="btnClear_Click" TabIndex="0">Clear</Button>
+            </ToolBarPanel>
+            <TextBox Name="txtUrl" Grid.Column="1" Margin="5" GotKeyboardFocus="txtUrl_GotKeyboardFocus"
+                     GotMouseCapture="txtUrl_GotMouseCapture" />
+            <StackPanel Grid.Column="2" VerticalAlignment="Stretch" 
+                        Orientation="Horizontal">
+                <Button Name="btnAdd"  Style="{StaticResource DefaultButtonStyle}" Click="btnAdd_Click" 
+                        VerticalAlignment="Bottom" Height="37" Margin="0,0,0,-0.2">Add</Button>
+                <CheckBox Name="chkStartNow" VerticalAlignment="Center" Margin="3,0,3,0" 
+                          IsChecked="True">Start now</CheckBox>
+            </StackPanel>
+        </Grid>
+
+        <ListView Name="lstDlQueue" Grid.Row="1" ItemsSource="{Binding DlQueue}" BorderBrush="#eee"
+                  SelectionMode="Extended">
+            <ListView.Resources>
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn Header="File" Width="200" 
+                                    DisplayMemberBinding="{Binding FileName}" />
+
+                    <GridViewColumn Header="Size" Width="80" 
+                                    DisplayMemberBinding="{Binding Progress.TotalBytes}" />
+
+                    <GridViewColumn Header="Status" Width="100" 
+                                    DisplayMemberBinding="{Binding Status}" />
+
+                    <GridViewColumn Header="Progress" Width="80">
+                        <GridViewColumn.DisplayMemberBinding>
+                            <MultiBinding StringFormat="{}{0:N2}% ({1})">
+                                <Binding Path="Progress.PercentComplete" />
+                                <Binding Path="Progress.BytesDownloaded" />
+                            </MultiBinding>
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Speed" Width="80" 
+                                    DisplayMemberBinding="{Binding Progress.Speed}" />
+
+                    <GridViewColumn Header="ETA" Width="120" 
+                                    DisplayMemberBinding="{Binding Progress.Eta, Converter={StaticResource formattedTimeSpan}}" />
+
+                    <GridViewColumn Header="Elapsed" Width="120" 
+                                    DisplayMemberBinding="{Binding Elapsed, Converter={StaticResource formattedTimeSpan}}" />
+
+                    <GridViewColumn Header="URL" Width="300" 
+                                    DisplayMemberBinding="{Binding Url}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Grid Grid.Row="2" Background="#345">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Name="lblStatusDownloads" Content="{Binding ElementName=lstDlQueue, Path=Items.Count}" 
+                   ContentStringFormat="Downloads: {0}" Style="{StaticResource StatusLabel}"></Label>
+            <Label Grid.Column="1" Name="lblStatusCompleted" Style="{StaticResource StatusLabel}">Completed: 0</Label>
+            <Label Grid.Column="2" Name="lblStatusInProgress" Style="{StaticResource StatusLabel}">In progress: 0</Label>
+            <Label Grid.Column="3" Name="lblStatusFailed" Style="{StaticResource StatusLabel}">Failed: 0</Label>
+            <Label Grid.Column="4" Name="lblStatus" Style="{StaticResource StatusLabel}" 
+                   Content="{Binding ElementName=lstDlQueue, Path=SelectedValue.Status}" HorizontalAlignment="Right"></Label>
+        </Grid>
+    </Grid>
+</Window>
