@@ -315,9 +315,9 @@ namespace ProjectDownloader.Core {
                 catch (Exception ex) {
                     if (!(ex is OperationCanceledException)) { // something went wrong
                         Status = DownloadTaskStatus.Failed;
-                    }
-                    
-                    throw;
+                        
+                        throw;
+                    }                    
                 }
                 finally {
                     downloadWatch.Stop();
